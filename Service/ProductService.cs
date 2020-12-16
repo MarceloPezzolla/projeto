@@ -1,7 +1,7 @@
 using projeto.Models;
 using System.Collections.Generic;
 using System.Linq;
-/*
+
 namespace projeto.Service
 {
     public class ProductService : IProductService
@@ -31,10 +31,9 @@ namespace projeto.Service
         public void UpdateProduct(Product item)
         {
             var model = this.products.Where(m => m.Id == item.Id).FirstOrDefault();
-            model.Title = item.Title;
-            model.Description = item.Description;
+            model.Name = item.Name;
             model.Price = item.Price;
         }
         
     }
-}*/ 
+}

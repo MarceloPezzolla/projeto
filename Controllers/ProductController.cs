@@ -19,6 +19,28 @@ namespace projeto.Controllers
             return products;
         }
 
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Product>> FindById([FromServices] DataContext context, int id)
+        {
+            var product = await context.Products
+                .Include(x => x.Category)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return product;
+        }
+        [HttpGet]
+        [Route("category/{id:int}")]
+        public async Task<ActionResult<List<Product>>> GetByCategory([FromServices] DataContext context, int id)
+        {
+            var product = await context.Products
+                .Include(x => x.Category)
+                .AsNoTracking()
+                .Where(x => x.CategoryId == id)
+                .ToListAsync();
+            return product;
+        }
+
         [HttpPost]
         [Route("")]
         public async Task<ActionResult<Product>> Post([FromServices] DataContext context, [FromBody] Product model)
@@ -35,48 +57,31 @@ namespace projeto.Controllers
             }
         }
         [HttpPut]
-        [Route("updateProduct/{id:int}")]
+        [Route("{id:int}")]
         public async Task<ActionResult<Product>> Update(int id, [FromServices] DataContext context, [FromBody]Product model)
+        {
+                context.Products.Update(model);
+                await context.SaveChangesAsync();
+
+                return model;
+           
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Product>> Delete(int id, [FromServices] DataContext context, [FromBody]Product model)
         {
             if (ModelState.IsValid)
             {
-                var productToUpdate = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
-                productToUpdate.Name = model.Name;
-                productToUpdate.Price = model.Price;
-                productToUpdate.Supplier = model.Supplier;
-                Supplier supplier = await context.Suppliers.SingleAsync(a => a.Id == model.SupplierId);
-                productToUpdate.Supplier = supplier;
-
-                productToUpdate.Supplier = supplier;
-
-
-                return productToUpdate;
+                var productToDelete = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
+                context.Products.Remove(productToDelete);
+                await context.SaveChangesAsync();
+                return model;
             }
             else
             {
                 return BadRequest(ModelState);
             }
-        }
-
-        [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ActionResult<Product>> FindById([FromServices] DataContext context, int id)
-        {
-            var product = await context.Products.Include(x => x.Category)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id ==id);
-            return product;
-        }
-        [HttpGet]
-        [Route("categories/{id:int}")]
-        public async Task<ActionResult<List<Product>>> GetByCategory([FromServices] DataContext context, int id)
-        {
-            var product = await context.Products
-                .Include(x => x.Category)
-                .AsNoTracking()
-                .Where(x => x.CategoryId == id)
-                .ToListAsync();
-            return product;
         }
         
     }

@@ -17,9 +17,18 @@ namespace projeto.Controllers
             var clients = await context.Clients.ToListAsync();
             return clients;
         }
+        [HttpGet]
+        [Route("getClient/{id:int}")]
+        public async Task<ActionResult<Client>> FindById([FromServices] DataContext context, int id)
+        {
+            var client = await context.Clients
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id ==id);
+            return client;
+        }
 
         [HttpPost]
-        [Route("create")]
+        [Route("")]
         public async Task<ActionResult<Client>> Post([FromServices] DataContext context, [FromBody] Client model)
         {
             if (ModelState.IsValid)
@@ -33,15 +42,5 @@ namespace projeto.Controllers
                 return BadRequest(ModelState);
             }
         }
-        [HttpGet]
-        [Route("getProduct/{id:int}")]
-        public async Task<ActionResult<Client>> FindById([FromServices] DataContext context, int id)
-        {
-            var client = await context.Clients
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id ==id);
-            return client;
-        }
-        
     }
 }

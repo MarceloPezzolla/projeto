@@ -17,9 +17,18 @@ namespace projeto.Controllers
             var categories = await context.Categories.ToListAsync();
             return categories;
         }
+        [HttpGet]
+        [Route("getCategory/{id:int}")]
+        public async Task<ActionResult<Category>> FindById([FromServices] DataContext context, int id)
+        {
+            var category = await context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id ==id);
+            return category;
+        }
 
         [HttpPost]
-        [Route("create")]
+        [Route("")]
         public async Task<ActionResult<Category>> Post([FromServices] DataContext context, [FromBody] Category model)
         {
             if (ModelState.IsValid)
@@ -32,16 +41,6 @@ namespace projeto.Controllers
             {
                 return BadRequest(ModelState);
             }
-        }
-        [HttpGet]
-        [Route("getCategory/{id:int}")]
-        public async Task<ActionResult<Category>> FindById([FromServices] DataContext context, int id)
-        {
-            var category = await context.Categories
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id ==id);
-            return category;
-        }
-        
+        }        
     }
 }

@@ -24,9 +24,18 @@ namespace projeto.Controllers
             var suppliers = await context.Suppliers.ToListAsync();
             return suppliers;
         }
+               [HttpGet]
+        [Route("getSupplier/{id:int}")]
+        public async Task<ActionResult<Supplier>> FindById([FromServices] DataContext context, int id)
+        {
+            var supplier = await context.Suppliers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id ==id);
+            return supplier;
+        }
 
         [HttpPost]
-        [Route("create")]
+        [Route("")]
         public async Task<ActionResult<Supplier>> Post([FromServices] DataContext context, [FromBody] Supplier model)
         {
             if (ModelState.IsValid)
@@ -40,14 +49,22 @@ namespace projeto.Controllers
                 return BadRequest(ModelState);
             }
         }
-        [HttpGet]
-        [Route("getSupplier/{id:int}")]
-        public async Task<ActionResult<Supplier>> FindById([FromServices] DataContext context, int id)
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Supplier>> Delete(int id, [FromServices] DataContext context, [FromBody]Supplier model)
         {
-            var supplier = await context.Suppliers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id ==id);
-            return supplier;
+            if (ModelState.IsValid)
+            {
+                var supplierToDelete = await context.Suppliers.FirstOrDefaultAsync(x => x.Id == id);
+                context.Suppliers.Remove(supplierToDelete);
+                await context.SaveChangesAsync();
+                return model;
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
         
     }

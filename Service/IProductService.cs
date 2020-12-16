@@ -1,4 +1,4 @@
-/*using projeto.Models;
+using projeto.Models;
 using System.Collections.Generic;
 
 namespace projeto.Service
@@ -12,4 +12,4 @@ namespace projeto.Service
         void DeleteProduct(int id);
         bool ProductExists(int id);
     }
-}*/
+}
